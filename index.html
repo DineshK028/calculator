@@ -2,124 +2,129 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Age Calculator Pro</title>
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- jsPDF for PDF export -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- confetti -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Age Calculator</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <header class="topbar">
-      <div class="brand">🎂 Age Calculator Pro</div>
+  <header class="hero">
+    <div class="hero-inner">
+      <h1>Age Calculator</h1>
+      <p>Calculate your exact age in years, months, and days with our free age calculator. Perfect for quick age calculation for registration forms, vastu, numerology or what day of the week you were born.</p>
+    </div>
+  </header>
 
-      <div class="controls">
-        <select id="langSelect" aria-label="Language">
-          <option value="en">English</option>
-          <option value="hi">हिन्दी</option>
-          <option value="kn">ಕನ್ನಡ</option>
-          <option value="ta">தமிழ்</option>
-          <option value="te">తెలుగు</option>
-          <option value="ml">മലയാളം</option>
-        </select>
+  <nav class="breadcrumb">All Tools &gt; <strong>Age Calculator</strong></nav>
 
-        <button id="themeToggle" aria-label="Toggle theme">🌙</button>
+  <main class="page">
+    <section class="card container">
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-tab="today">Age Today</button>
+        <button class="tab" data-tab="specific">Specific Date</button>
+        <button class="tab" data-tab="find">Find DOB</button>
       </div>
-    </header>
 
-    <main class="card">
-      <form id="mainForm" class="form-grid" autocomplete="off">
-        <div class="field">
-          <label for="dob1" data-i18n="labelDob1">Your Date of Birth</label>
-          <input id="dob1" type="date" required />
-          <div class="small muted" id="savedNote" aria-live="polite"></div>
-        </div>
+      <!-- Tab panels -->
+      <div class="tab-content">
 
-        <div class="field">
-          <label for="dob2" data-i18n="labelDob2">Compare with (optional)</label>
-          <input id="dob2" type="date" />
-        </div>
-
-        <div class="actions">
-          <button id="calcBtn" type="submit" class="btn primary" data-i18n="btnCalculate">Calculate Age</button>
-          <button id="resetBtn" type="button" class="btn" data-i18n="btnReset">Reset</button>
-        </div>
-
-        <div class="extra-actions">
-          <button id="shareBtn" type="button" class="btn" data-i18n="btnShare">Get Share Link</button>
-          <button id="saveBtn" type="button" class="btn" data-i18n="btnSave">Save DOB</button>
-          <button id="pdfBtn" type="button" class="btn" data-i18n="btnPDF">Download PDF</button>
-        </div>
-      </form>
-
-      <section id="result" class="result hidden" aria-live="polite">
-        <div class="result-head">
-          <h2 data-i18n="resultTitle">Results</h2>
-          <div class="birthday-badge" id="birthdayBadge" aria-hidden="true">🎉 Happy Birthday!</div>
-        </div>
-
-        <div class="result-grid">
-          <div class="card-small">
-            <h3 data-i18n="ageLabel">Age</h3>
-            <p id="ageText">—</p>
+        <!-- Age Today / Specific share same layout; will switch behavior based on tab -->
+        <div class="panel" id="panel-calc">
+          <label class="label">Date of Birth</label>
+          <div class="input-row">
+            <input id="dobInput" type="date" aria-label="Date of Birth" />
+            <button id="shareBtn" class="btn-outline" title="Share link">Share</button>
           </div>
 
-          <div class="card-small">
-            <h3 data-i18n="bornOnLabel">Born on</h3>
-            <p id="bornText">—</p>
+          <!-- For Specific Date tab -->
+          <div id="asOfRow" class="asof hidden">
+            <label class="label">Calculate age as of</label>
+            <input id="asOfInput" type="date" />
           </div>
 
-          <div class="card-small">
-            <h3 data-i18n="nextBdayLabel">Next Birthday</h3>
-            <p id="nextBdayText">—</p>
+          <div class="actions">
+            <button id="calcBtn" class="btn-primary">Calculate</button>
+            <button id="resetBtn" class="btn-ghost">Reset</button>
           </div>
 
-          <div class="card-small">
-            <h3 data-i18n="daysLeftLabel">Days left</h3>
-            <p id="daysLeftText">—</p>
-          </div>
+          <hr />
 
-          <div class="card-small wide">
-            <h3 data-i18n="liveTimerLabel">Live Timer (you've been alive)</h3>
-            <p id="liveTimer">—</p>
-          </div>
+          <!-- Result card -->
+          <div class="result-area hidden" id="resultArea">
+            <h2 class="center">Your Current Age</h2>
+            <p class="big-age" id="ageOutput">—</p>
+            <p class="muted center" id="bornWeekday">—</p>
 
-          <div class="card-small wide">
-            <h3 data-i18n="totalTimeLabel">Total Time Lived</h3>
-            <p id="totalTime">—</p>
-          </div>
-
-          <div class="card-small wide">
-            <h3 data-i18n="progressLabel">Birthday Progress</h3>
-            <div class="progress-wrap">
-              <div id="progressBar" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+            <!-- Info boxes -->
+            <div class="info-grid">
+              <div class="info-box"><div class="info-number" id="totalDays">—</div><div class="info-label">Total Days</div></div>
+              <div class="info-box"><div class="info-number" id="totalWeeks">—</div><div class="info-label">Total Weeks</div></div>
+              <div class="info-box"><div class="info-number" id="totalMonths">—</div><div class="info-label">Total Months</div></div>
+              <div class="info-box"><div class="info-number" id="totalHours">—</div><div class="info-label">Total Hours</div></div>
             </div>
-            <small id="progressPercent">—</small>
-          </div>
 
-          <div class="card-small wide">
-            <h3 data-i18n="diffLabel">Age Difference</h3>
-            <p id="diffText">—</p>
+            <!-- Next birthday -->
+            <div class="next-bday">
+              <h3>Next Birthday</h3>
+              <p id="nextBdayDate">—</p>
+              <div class="bday-buttons">
+                <button class="small-btn" id="daysToGoBtn">—</button>
+                <button class="small-btn" id="turningBtn">—</button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="result-actions">
-          <button id="copyBtn" class="btn" data-i18n="btnCopy">Copy Result</button>
-          <button id="confettiBtn" class="btn" data-i18n="btnConfetti">Celebrate (Confetti)</button>
+        <!-- Find DOB panel -->
+        <div class="panel hidden" id="panel-find">
+          <label class="label">I am / They are</label>
+          <div class="find-row">
+            <input id="yearsInput" type="number" min="0" placeholder="Years" />
+            <input id="monthsInput" type="number" min="0" max="11" placeholder="Months" />
+            <input id="daysInput" type="number" min="0" max="31" placeholder="Days" />
+          </div>
+
+          <div class="actions">
+            <button id="findBtn" class="btn-primary">Find DOB</button>
+            <button id="findResetBtn" class="btn-ghost">Reset</button>
+          </div>
+
+          <hr />
+
+          <div class="result-area hidden" id="findResult">
+            <h2 class="center">Estimated Date of Birth</h2>
+            <p class="big-age" id="dobFound">—</p>
+            <p class="muted center" id="dobFoundWeekday">—</p>
+            <div class="info-grid single">
+              <div class="info-box"><div class="info-number" id="dobFoundIso">—</div><div class="info-label">ISO</div></div>
+            </div>
+          </div>
         </div>
-      </section>
-    </main>
 
-    <footer class="foot">
-      <small>Made with ❤️ • Age Calculator Pro</small>
-    </footer>
-  </div>
+      </div>
+    </section>
 
-  <script src="script.js" defer></script>
+    <!-- Info / FAQ area like screenshot -->
+    <section class="container faq">
+      <h3>How to calculate age?</h3>
+      <ol>
+        <li>Enter your birth date in the first field</li>
+        <li>Enter the date you want to calculate your age as of (defaults to today)</li>
+        <li>Click the Calculate button to see your exact age in years, months, and days</li>
+      </ol>
+
+      <h3>Can I use this to find what day I was born?</h3>
+      <p>Yes. Enter your date of birth and click Calculate. The tool will display the weekday (e.g., Monday).</p>
+
+      <h3>How can I create a link to share my age?</h3>
+      <p>Enter your birth date and click <strong>Share</strong>. The generated link will copy to your clipboard.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>Made with ♥ • Age Calculator</small>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
