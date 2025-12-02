@@ -1,26 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Age Calculator</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Age Calculator Pro</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <div class="calculator">
-        <h1>🎂 Age Calculator</h1>
+  <div class="container">
+    <header class="topbar">
+      <div class="brand">🎂 Age Calculator Pro</div>
 
-        <form id="ageForm">
-            <label for="dob">Enter your Date of Birth:</label>
-            <input type="date" id="dob" required>
-            
-            <button type="submit" class="btn">Calculate Age</button>
-            <button type="reset" class="reset-btn" id="resetBtn">Reset</button>
-        </form>
+      <div class="controls">
+        <select id="langSelect" aria-label="Language">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="kn">ಕನ್ನಡ</option>
+          <option value="ta">தமிழ்</option>
+          <option value="te">తెలుగు</option>
+          <option value="ml">മലയാളം</option>
+        </select>
 
-        <div id="result" class="result hidden"></div>
-    </div>
+        <button id="themeToggle" aria-label="Toggle theme">🌙</button>
+      </div>
+    </header>
 
-    <script src="script.js"></script>
+    <main class="card">
+      <form id="mainForm" class="form-grid" autocomplete="off">
+        <div class="field">
+          <label for="dob1" data-i18n="labelDob1">Your Date of Birth</label>
+          <input id="dob1" type="date" required />
+          <div class="small muted" id="savedNote" aria-live="polite"></div>
+        </div>
+
+        <div class="field">
+          <label for="dob2" data-i18n="labelDob2">Compare with (optional)</label>
+          <input id="dob2" type="date" />
+        </div>
+
+        <div class="actions">
+          <button id="calcBtn" type="submit" class="btn primary" data-i18n="btnCalculate">Calculate Age</button>
+          <button id="resetBtn" type="button" class="btn" data-i18n="btnReset">Reset</button>
+        </div>
+
+        <div class="extra-actions">
+          <button id="shareBtn" type="button" class="btn" data-i18n="btnShare">Get Share Link</button>
+          <button id="saveBtn" type="button" class="btn" data-i18n="btnSave">Save DOB</button>
+          <button id="pdfBtn" type="button" class="btn" data-i18n="btnPDF">Download PDF</button>
+        </div>
+      </form>
+
+      <section id="result" class="result hidden" aria-live="polite">
+        <div class="result-head">
+          <h2 data-i18n="resultTitle">Results</h2>
+          <div class="birthday-badge" id="birthdayBadge" aria-hidden="true">🎉 Happy Birthday!</div>
+        </div>
+
+        <div class="result-grid">
+          <div class="card-small">
+            <h3 data-i18n="ageLabel">Age</h3>
+            <p id="ageText">—</p>
+          </div>
+
+          <div class="card-small">
+            <h3 data-i18n="bornOnLabel">Born on</h3>
+            <p id="bornText">—</p>
+          </div>
+
+          <div class="card-small">
+            <h3 data-i18n="nextBdayLabel">Next Birthday</h3>
+            <p id="nextBdayText">—</p>
+          </div>
+
+          <div class="card-small">
+            <h3 data-i18n="daysLeftLabel">Days left</h3>
+            <p id="daysLeftText">—</p>
+          </div>
+
+          <div class="card-small wide">
+            <h3 data-i18n="liveTimerLabel">Live Timer (you've been alive)</h3>
+            <p id="liveTimer">—</p>
+          </div>
+
+          <div class="card-small wide">
+            <h3 data-i18n="totalTimeLabel">Total Time Lived</h3>
+            <p id="totalTime">—</p>
+          </div>
+
+          <div class="card-small wide">
+            <h3 data-i18n="progressLabel">Birthday Progress</h3>
+            <div class="progress-wrap">
+              <div id="progressBar" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <small id="progressPercent">—</small>
+          </div>
+
+          <div class="card-small wide">
+            <h3 data-i18n="diffLabel">Age Difference</h3>
+            <p id="diffText">—</p>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button id="copyBtn" class="btn" data-i18n="btnCopy">Copy Result</button>
+          <button id="confettiBtn" class="btn" data-i18n="btnConfetti">Celebrate (Confetti)</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <small>Made with ❤️ • Age Calculator Pro</small>
+    </footer>
+  </div>
+
+  <script src="script.js" defer></script>
 </body>
 </html>
